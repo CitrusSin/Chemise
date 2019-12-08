@@ -1,0 +1,68 @@
+body {
+    font-family: "Exo 2","Helvetica Neue",Tahoma,Arial,"Hiragino Kaku Gothic ProN","Meiryo","Microsoft YaHei","Apple SD Gothic Neo",sans-serif;
+    background-image: linear-gradient(to bottom right, lightgrey 5%,aqua 80%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    text-align: center;
+}
+
+h1 {
+    color: lightcyan;
+    text-align: center;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    font-style: normal;
+}
+
+div.main {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px rgba(20, 20, 20, 0.4);
+    margin: 0px 15% 0px 15%;
+    padding: 5px;
+}
+
+p {
+    font-size: 20px;
+}
+
+input {
+    font: inherit;
+    transition: box-shadow 0.5s;
+    font-style: italic;
+    border-width: 0px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px rgba(20, 20, 20, 0.4);
+    padding: 7px;
+}
+
+input.centerInput {
+    width: 70%;
+}
+
+input:focus {
+    transition: box-shadow 0.5s;
+    box-shadow: 0px 0px 9px rgba(20, 20, 20, 0.4);
+}
+
+input:hover {
+    transition: box-shadow 0.5s;
+    box-shadow: 0px 0px 7px rgba(20, 20, 20, 0.4);
+}
+
+button {
+    font: inherit;
+    transition: box-shadow 0.5s, background-color 0.5s, color 0.5s;
+    border-width: 0px;
+    border-radius: 3px;
+    background-color: dodgerblue;
+    color: white;
+    box-shadow: 1px 1px 1px rgba(20, 20, 20, 0.4);
+    padding: 7px;
+}
+
+button:hover {
+    transition: box-shadow 0.5s, background-color 0.5s, color 0.5s;
+    box-shadow: 3px 3px 3px rgba(20, 20, 20, 0.4);
+    background-color: aqua;
+    color: black;
+}
