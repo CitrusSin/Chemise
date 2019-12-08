@@ -231,6 +231,22 @@ function balance(inputEqu) {
             matrix[i] = row;
         }
         var simCount = Math.min(matrix.length, matrix[0].length-1);
+        for (let y1=0;y1<matrix.length;y1++) {
+            for (let y2=0;y2<matrix.length;y2++) {
+                if (y1 != y2) {
+                    var isFullyEqual = true;
+                    for (let x=0;x<matrix[0].length;x++) {
+                        if (matrix[y1][x].compareTo(matrix[y2][x]) != 0) {
+                            isFullyEqual = false;
+                            break;
+                        }
+                    }
+                    if (isFullyEqual) {
+                        matrix.splice(y2, 1);
+                    }
+                }
+            }
+        }
         for (let h=0;h<simCount;h++) {
             if (matrix[h][h].compareTo(0) == 0) {
                 for (let i=0;i<matrix.length;i++) {
