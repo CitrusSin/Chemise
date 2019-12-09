@@ -189,7 +189,7 @@ function getDiff(list1, list2) {
 }
 
 function balance(inputEqu) {
-    try {
+    //try {
         var arr1 = inputEqu.split("-");
         if (arr1.length != 2) {
             return "Error: Wrong pattern of chemical equation!";
@@ -231,18 +231,33 @@ function balance(inputEqu) {
             matrix[i] = row;
         }
         var simCount = Math.min(matrix.length, matrix[0].length-1);
+        matrix.forEach((row, index) => {
+            if (row.find(n => n.compareTo(0) != 0) == undefined) {
+                matrix.splice(index, 1);
+            }
+        });
         for (let y1=0;y1<matrix.length;y1++) {
             for (let y2=0;y2<matrix.length;y2++) {
                 if (y1 != y2) {
                     var isFullyEqual = true;
-                    for (let x=0;x<matrix[0].length;x++) {
-                        if (matrix[y1][x].compareTo(matrix[y2][x]) != 0) {
-                            isFullyEqual = false;
+                    var k = undefined;
+                    for (let referX=0;referX<matrix[0].length;referX++) {
+                        if (matrix[y1][referX].compareTo(0) != 0 && matrix[y2][referX].compareTo(0) != 0) {
+                            k = matrix[y1][referX].divideBy(matrix[y2][referX]);
                             break;
                         }
                     }
-                    if (isFullyEqual) {
-                        matrix.splice(y2, 1);
+                    if (k != undefined) {
+                        for (let x=0;x<matrix[0].length;x++) {
+                            if ((matrix[y2][x].compareTo(0) != 0 && matrix[y1][x].divideBy(matrix[y2][x]).compareTo(k) != 0)
+                                || (matrix[y2][x].compareTo(0) == 0 && matrix[y1][x].compareTo(0) != 0)) {
+                                isFullyEqual = false;
+                                break;
+                            }
+                        }
+                        if (isFullyEqual) {
+                            matrix.splice(y2, 1);
+                        }
                     }
                 }
             }
@@ -309,7 +324,7 @@ function balance(inputEqu) {
             }
         }
         return result;
-    } catch(err) {
-        return "Error: "+err;
-    }
+    //} catch(err) {
+        //return "Error: "+err;
+    //}
 }
