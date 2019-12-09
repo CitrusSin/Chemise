@@ -1,6 +1,6 @@
 body {
     font-family: "Exo 2","Helvetica Neue",Tahoma,Arial,"Hiragino Kaku Gothic ProN","Meiryo","Microsoft YaHei","Apple SD Gothic Neo",sans-serif;
-    background: linear-gradient(to bottom, aquamarine, rgb(30, 144, 255)) no-repeat fixed;
+    background: linear-gradient(to bottom, aquamarine 10%, dodgerblue 80%) no-repeat fixed;
     background-size: cover;
     text-align: center;
 }
