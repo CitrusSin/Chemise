@@ -189,7 +189,7 @@ function getDiff(list1, list2) {
 }
 
 function balance(inputEqu) {
-    //try {
+    try {
         var arr1 = inputEqu.split("-");
         if (arr1.length != 2) {
             return "Error: Wrong pattern of chemical equation!";
@@ -324,7 +324,7 @@ function balance(inputEqu) {
             }
         }
         return result;
-    //} catch(err) {
-        //return "Error: "+err;
-    //}
+    } catch(err) {
+        return "Error: "+err;
+    }
 }
