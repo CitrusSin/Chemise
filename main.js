@@ -192,7 +192,7 @@ function balance(inputEqu) {
     try {
         var arr1 = inputEqu.split("-");
         if (arr1.length != 2) {
-            return "Error: Wrong pattern of chemical equation!";
+            throw "化学方程式格式错误！";
         }
         var leftchemstr = arr1[0].split("+");
         var rightchemstr = arr1[1].split("+");
@@ -206,7 +206,7 @@ function balance(inputEqu) {
         rightChems.forEach(chem => rightElements = getUnion(rightElements, chem.elements));
         var diffs = getDiff(leftElements, rightElements);
         if (diffs.length > 0) {
-            return "Error: Elements " + diffs.join(", ") + " are not balanced";
+            throw "元素" + diffs.join(", ") + "不守恒！";
         }
         var matrix = [];
         for (let i=0;i<leftElements.length;i++) {
@@ -325,6 +325,6 @@ function balance(inputEqu) {
         }
         return result;
     } catch(err) {
-        return "Error: "+err;
+        throw "错误: "+err;
     }
 }
