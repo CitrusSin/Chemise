@@ -3,11 +3,27 @@ class Chemical {
         this.exp = exp;
         this.elements = [];
         this.elementCount = new Map();
+        this.elec = 0;
         var reading = "";
         var num = 0;
+        var readingElec = false;
+        var elecS = "";
         for (let i = 0; i < exp.length; i++) {
             var c = exp.charCodeAt(i);
-            if (c >= 'A'.charCodeAt(0) && c <= 'Z'.charCodeAt(0)) {
+            if (readingElec) {
+                if (exp[i] == '*' || exp[i] == '-') {
+                    if (elecS.length > 0) {
+                        this.elec = parseInt(elecS);
+                    } else {
+                        this.elec = 1;
+                    }
+                    if (exp[i] == '-') {
+                        this.elec = -this.elec;
+                    }
+                } else {
+                    elecS += exp[i];
+                }
+            } else if (c >= 'A'.charCodeAt(0) && c <= 'Z'.charCodeAt(0)) {
                 if (i != 0) {
                     this.addElement(reading, num);
                     num = 0;
@@ -16,7 +32,7 @@ class Chemical {
                 reading += exp[i];
             } else if (c >= '0'.charCodeAt(0) && c <= '9'.charCodeAt(0)) {
                 num = (num * 10) + (c & 0x0F);
-            } else if (c == '('.charCodeAt(0)) {
+            } else if (exp[i] == '(') {
                 if (reading.length > 0) {
                     this.addElement(reading, num);
                     num = 0;
@@ -36,11 +52,16 @@ class Chemical {
                 }
                 subChem.elements.forEach(element => this.addElement(element, subChem.elementCount.get(element) * k));
                 i = index - 1;
+            } else if (exp[i] == '^') {
+                this.addElement(reading, num);
+                readingElec = true;
             } else {
                 reading += exp[i];
             }
         }
-        this.addElement(reading, num);
+        if (!readingElec) {
+            this.addElement(reading, num);
+        }
     }
 
     addElement(name, num) {
@@ -189,8 +210,8 @@ function getDiff(list1, list2) {
 }
 
 function balance(inputEqu) {
-    try {
-        var arr1 = inputEqu.split("-");
+    //try {
+        var arr1 = inputEqu.split("=>");
         if (arr1.length != 2) {
             throw "化学方程式格式错误！";
         }
@@ -230,6 +251,16 @@ function balance(inputEqu) {
             }
             matrix[i] = row;
         }
+        var elecRow = [];
+        for (let a = 0;a<leftChems.length;a++) {
+            var chem = leftChems[a];
+            elecRow[a] = new Rational(chem.elec, 1);
+        }
+        for (let a=0;a<rightChems.length;a++) {
+            var chem = rightChems[a];
+            elecRow[a+leftChems.length] = new Rational(-chem.elec, 1);
+        }
+        matrix.push(elecRow);
         var simCount = Math.min(matrix.length, matrix[0].length-1);
         matrix.forEach((row, index) => {
             if (row.find(n => n.compareTo(0) != 0) == undefined) {
@@ -324,7 +355,7 @@ function balance(inputEqu) {
             }
         }
         return result;
-    } catch(err) {
-        throw "错误: "+err;
-    }
+    //} catch(err) {
+        //throw "错误: "+err;
+    //}
 }
