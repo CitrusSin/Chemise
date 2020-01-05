@@ -210,7 +210,7 @@ function getDiff(list1, list2) {
 }
 
 function balance(inputEqu) {
-    //try {
+    try {
         var arr1 = inputEqu.split("=>");
         if (arr1.length != 2) {
             throw "化学方程式格式错误！";
@@ -355,7 +355,7 @@ function balance(inputEqu) {
             }
         }
         return result;
-    //} catch(err) {
-        //throw "错误: "+err;
-    //}
+    } catch(err) {
+        throw "错误: "+err;
+    }
 }

@@ -90,16 +90,16 @@ function processStart() {
     document.getElementById("showdiv").hidden = false;
     var output = document.getElementById("output");
     var warning = document.getElementById("warning");
-    //try {
+    try {
         var balanced = balance(document.getElementById("chemInput").value);
         output.style.color = "black";
         output.innerText = "结果: \n" + balanced;
         warning.hidden = true;
-    //} catch (err) {
-        //warning.hidden = false;
-        //output.style.color = "red";
-        //output.innerText = err;
-    //}
+    } catch (err) {
+        warning.hidden = false;
+        output.style.color = "red";
+        output.innerText = err;
+    }
 }
 var b = document.getElementById("body");
 b.setAttribute("style", "background-size: " + window.screen.availWidth + "px " + window.screen.availHeight + "px;")
