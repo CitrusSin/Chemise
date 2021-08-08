@@ -1,5 +1,5 @@
 body {
-    font-family: "Exo 2","Helvetica Neue",Tahoma,Arial,"Hiragino Kaku Gothic ProN","Meiryo","Microsoft YaHei","Apple SD Gothic Neo",sans-serif;
+    font-family: Torus,"Helvetica Neue",Tahoma,Arial,"Hiragino Kaku Gothic ProN",Meiryo,"Microsoft YaHei","Apple SD Gothic Neo",sans-serif;
     background: linear-gradient(to bottom, aquamarine 10%, dodgerblue 80%) no-repeat;
     background-attachment: fixed;
     background-size: contain;
@@ -22,14 +22,13 @@ div.main {
 }
 
 p {
-    font-family: "Exo 2","Helvetica Neue",Tahoma,Arial,"Hiragino Kaku Gothic ProN","Meiryo","Microsoft YaHei","Apple SD Gothic Neo",sans-serif;
+    font-family: Torus,"Helvetica Neue",Tahoma,Arial,"Hiragino Kaku Gothic ProN",Meiryo,"Microsoft YaHei","Apple SD Gothic Neo",sans-serif;
     font-size: 15px;
 }
 
 input {
     font: inherit;
     transition: box-shadow 0.5s;
-    font-style: italic;
     border-width: 0px;
     border-radius: 3px;
     box-shadow: 0px 0px 5px rgba(20, 20, 20, 0.4);

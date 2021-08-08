@@ -4,12 +4,12 @@ class Chemical {
         this.elements = [];
         this.elementCount = new Map();
         this.elec = 0;
-        var reading = "";
-        var num = 0;
-        var readingElec = false;
-        var elecS = "";
+        let reading = "";
+        let num = 0;
+        let readingElec = false;
+        let elecS = "";
         for (let i = 0; i < exp.length; i++) {
-            var c = exp.charCodeAt(i);
+            let c = exp.charCodeAt(i);
             if (readingElec) {
                 if (exp[i] == '*' || exp[i] == '-') {
                     if (elecS.length > 0) {
@@ -38,9 +38,9 @@ class Chemical {
                     num = 0;
                     reading = "";
                 }
-                var index = exp.indexOf(')', i + 1);
-                var subChem = new Chemical(exp.slice(i + 1, index));
-                var k = 0;
+                let index = exp.indexOf(')', i + 1);
+                let subChem = new Chemical(exp.slice(i + 1, index));
+                let k = 0;
                 index++;
                 while (exp.length > index && exp.charCodeAt(index) >= '0'.charCodeAt(0) && exp.charCodeAt(index) <= '9'.charCodeAt(0)) {
                     k *= 10;
@@ -75,7 +75,7 @@ class Chemical {
             this.elements.push(name);
             this.elementCount.set(name, num);
         } else {
-            var count = this.elementCount.get(name);
+            let count = this.elementCount.get(name);
             this.elementCount.set(name, count + num);
         }
     }
@@ -83,7 +83,7 @@ class Chemical {
 
 function getMaxDiv(a, b) {
     while (a % b != 0) {
-        var c = a % b;
+        let c = a % b;
         a = b;
         b = c;
     }
@@ -95,7 +95,7 @@ function getMinMulti(a, b) {
 }
 
 function getListMinMulti(list) {
-    var comm = list[0];
+    let comm = list[0];
     for (let n=1;n<list.length;n++) {
         comm = getMinMulti(comm, list[n]);
     }
@@ -104,7 +104,7 @@ function getListMinMulti(list) {
 
 class Rational {
     constructor(numer, deno){
-        var maxDiv = getMaxDiv(numer, deno);
+        let maxDiv = getMaxDiv(numer, deno);
         this.numer = numer / maxDiv;
         this.deno = deno / maxDiv;
     }
@@ -113,11 +113,11 @@ class Rational {
         if (typeof(rational) == "number") {
             rational = new Rational(rational, 1);
         }
-        var num1 = this.numer;
-        var deno1 = this.deno;
-        var num2 = rational.numer;
-        var deno2 = rational.deno;
-        var minMulti = getMinMulti(deno1, deno2);
+        let num1 = this.numer;
+        let deno1 = this.deno;
+        let num2 = rational.numer;
+        let deno2 = rational.deno;
+        let minMulti = getMinMulti(deno1, deno2);
         num1 *= (minMulti / deno1);
         num2 *= (minMulti / deno2);
         return new Rational(num1+num2, minMulti);
@@ -127,11 +127,11 @@ class Rational {
         if (typeof(rational) == "number") {
             rational = new Rational(rational, 1);
         }
-        var num1 = this.numer;
-        var deno1 = this.deno;
-        var num2 = rational.numer;
-        var deno2 = rational.deno;
-        var minMulti = getMinMulti(deno1, deno2);
+        let num1 = this.numer;
+        let deno1 = this.deno;
+        let num2 = rational.numer;
+        let deno2 = rational.deno;
+        let minMulti = getMinMulti(deno1, deno2);
         num1 *= (minMulti / deno1);
         num2 *= (minMulti / deno2);
         return new Rational(num1-num2, minMulti);
@@ -174,13 +174,31 @@ class Rational {
         }
     }
 
+    abs() {
+        return new Rational(Math.abs(this.numer), Math.abs(this.deno));
+    }
+
     toString() {
+        if (this.deno == 1) {
+            return this.numer.toString();
+        }
         return this.numer + "/" + this.deno;
     }
 }
 
+function debugMatrix(matrix) {
+    for (let i=0;i<matrix.length;i++) {
+        let str = "";
+        for (let j=0;j<matrix[i].length;j++) {
+            let nums = matrix[i][j].toString()
+            str += nums + " ".repeat(8-nums.length);
+        }
+        console.log(str);
+    }
+}
+
 function getUnion(list1, list2) {
-    var union = [];
+    let union = [];
     list1.forEach(element => {
         if (union.find(e => e == element) == undefined) {
             union.push(element);
@@ -195,7 +213,7 @@ function getUnion(list1, list2) {
 }
 
 function getDiff(list1, list2) {
-    var diff = [];
+    let diff = [];
     list1.forEach(element => {
         if (list2.find(e => e == element) == undefined) {
             diff.push(element);
@@ -211,30 +229,31 @@ function getDiff(list1, list2) {
 
 function balance(inputEqu) {
     try {
-        var arr1 = inputEqu.split("=");
+        let arr1 = inputEqu.split("=");
         if (arr1.length != 2) {
             throw "化学方程式格式错误！";
         }
-        var leftchemstr = arr1[0].split("+");
-        var rightchemstr = arr1[1].split("+");
-        var leftChems = [];
-        var rightChems = [];
+        let leftchemstr = arr1[0].split("+");
+        let rightchemstr = arr1[1].split("+");
+        let leftChems = [];
+        let rightChems = [];
         leftchemstr.forEach(element => leftChems.push(new Chemical(element)));
         rightchemstr.forEach(element => rightChems.push(new Chemical(element)));
-        var leftElements = [];
-        var rightElements = [];
+        let leftElements = [];
+        let rightElements = [];
         leftChems.forEach(chem => leftElements = getUnion(leftElements, chem.elements));
         rightChems.forEach(chem => rightElements = getUnion(rightElements, chem.elements));
-        var diffs = getDiff(leftElements, rightElements);
+        let diffs = getDiff(leftElements, rightElements);
         if (diffs.length > 0) {
             throw "元素" + diffs.join(", ") + "不守恒！";
         }
-        var matrix = [];
+        // 构建矩阵以解线性方程组（有多解）
+        let matrix = [];
         for (let i=0;i<leftElements.length;i++) {
-            var element = leftElements[i];
-            var row = [];
+            let element = leftElements[i];
+            let row = [];
             for (let a = 0;a<leftChems.length;a++) {
-                var chem = leftChems[a];
+                let chem = leftChems[a];
                 if (chem.elements.find(e => e == element) != undefined) {
                     row[a] = new Rational(chem.elementCount.get(element), 1);
                 } else {
@@ -242,7 +261,7 @@ function balance(inputEqu) {
                 }
             }
             for (let a=0;a<rightChems.length;a++) {
-                var chem = rightChems[a];
+                let chem = rightChems[a];
                 if (chem.elements.find(e => e == element) != undefined) {
                     row[a+leftChems.length] = new Rational(-chem.elementCount.get(element), 1);
                 } else {
@@ -251,27 +270,31 @@ function balance(inputEqu) {
             }
             matrix[i] = row;
         }
-        var elecRow = [];
+        let elecRow = [];
         for (let a = 0;a<leftChems.length;a++) {
-            var chem = leftChems[a];
+            let chem = leftChems[a];
             elecRow[a] = new Rational(chem.elec, 1);
         }
         for (let a=0;a<rightChems.length;a++) {
-            var chem = rightChems[a];
+            let chem = rightChems[a];
             elecRow[a+leftChems.length] = new Rational(-chem.elec, 1);
         }
         matrix.push(elecRow);
-        var simCount = Math.min(matrix.length, matrix[0].length-1);
+        let simCount = Math.min(matrix.length, matrix[0].length-1);
+        // 移除没有意义的行（例如全为0的行或与其它行向量平行）
+        // 先移除全为0的行
         matrix.forEach((row, index) => {
             if (row.find(n => n.compareTo(0) != 0) == undefined) {
                 matrix.splice(index, 1);
             }
         });
+        // 再移除与其它行向量平行的行
+        // 遍历所有不重复的2行组
         for (let y1=0;y1<matrix.length;y1++) {
             for (let y2=0;y2<matrix.length;y2++) {
                 if (y1 != y2) {
-                    var isFullyEqual = true;
-                    var k = undefined;
+                    let isFullyEqual = true;
+                    let k = undefined;
                     for (let referX=0;referX<matrix[0].length;referX++) {
                         if (matrix[y1][referX].compareTo(0) != 0 && matrix[y2][referX].compareTo(0) != 0) {
                             k = matrix[y1][referX].divideBy(matrix[y2][referX]);
@@ -293,48 +316,57 @@ function balance(inputEqu) {
                 }
             }
         }
-        for (let h=0;h<simCount;h++) {
-            if (matrix[h][h].compareTo(0) == 0) {
-                for (let i=0;i<matrix.length;i++) {
-                    if (matrix[i][h].compareTo(0) != 0) {
-                        for (let x=0;x<matrix[i].length;x++) {
-                            matrix[h][x] = matrix[h][x].add(matrix[i][x]);
-                        }
-                        break;
-                    }
+        // 使用高斯消元法先将对角线左下角所有元素全变成0
+        for (let column=0;column<simCount;column++) {
+            // 获取此列包括对角线元素中绝对值最大的行
+            let maxRowIndex = 0;
+            let maxNum = new Rational(0, 1);
+            for (let row=column;row<matrix.length;row++) {
+                if (matrix[row][column].abs().compareTo(maxNum) > 0) {
+                    maxRowIndex = row;
+                    maxNum = matrix[row][column].abs();
+                }
+            }
+            // 将最大的行交换到顶行
+            let swapBuf = matrix[maxRowIndex];
+            matrix[maxRowIndex] = matrix[column];
+            matrix[column] = swapBuf;
+            // 将顶行对角线元素化为1
+            let prev = matrix[column][column];
+            for (let i=0;i<matrix[column].length;i++) {
+                matrix[column][i] = matrix[column][i].divideBy(prev);
+            }
+            // 将所有下行对应元素化为0
+            for (let row=column+1;row<matrix.length;row++) {
+                let k = matrix[row][column];
+                for (let i=0;i<matrix[row].length;i++) {
+                    matrix[row][i] = matrix[row][i].subtractBy(matrix[column][i].multiply(k));
                 }
             }
         }
-        for(let column=0;column<simCount;column++) {
-            for (let y=0;y<matrix.length;y++) {
-                if (y != column && matrix[y][column].compareTo(0) != 0) {
-                    var target = matrix[y][column];
-                    var k = matrix[column][column].negative().divideBy(target);
-                    for (let x=0;x<matrix[y].length;x++) {
-                        matrix[y][x] = matrix[y][x].multiply(k).add(matrix[column][x]);
-                    }
+        // 再将右上角化为0
+        for (let column=simCount-1;column>=0;column--) {
+            for (let row=column-1;row>=0;row--) {
+                let prev = matrix[row][column]
+                for (let i=0;i<matrix[row].length;i++) {
+                    matrix[row][i] = matrix[row][i].subtractBy(matrix[column][i].multiply(prev));
                 }
             }
         }
-        for (let h=0;h<simCount;h++) {
-            var k = new Rational(1, 1).divideBy(matrix[h][h]);
-            for (let x=0;x<matrix[0].length;x++){
-                matrix[h][x] = matrix[h][x].multiply(k);
-            }
-        }
-        var x = matrix[0].length-1;
-        var coefs = [];
+        // 取出矩阵中的结果
+        let x = matrix[0].length-1;
+        let coefs = [];
         for (let i=0;i<(leftChems.length+rightChems.length-1);i++) {
             coefs[i] = matrix[i][x].negative();
         }
         coefs.push(new Rational(1, 1));
-        var denos = [];
+        let denos = [];
         coefs.forEach(coef => denos.push(coef.deno));
-        var minMulti = getListMinMulti(denos);
+        let minMulti = getListMinMulti(denos);
         for (let i=0;i<coefs.length;i++) {
             coefs[i] = coefs[i].multiply(minMulti);
         }
-        var result = "";
+        let result = "";
         for (let i=0;i<leftChems.length;i++) {
             if (coefs[i].numer != 1) {
                 result += coefs[i].numer.toString()
