@@ -281,6 +281,8 @@ function balance(inputEqu) {
         }
         matrix.push(elecRow);
         let simCount = Math.min(matrix.length, matrix[0].length-1);
+        console.log("Original matrix built.");
+        debugMatrix(matrix);
         // 移除没有意义的行（例如全为0的行或与其它行向量平行）
         // 先移除全为0的行
         matrix.forEach((row, index) => {
@@ -316,6 +318,8 @@ function balance(inputEqu) {
                 }
             }
         }
+        console.log("Simplified matrix: ");
+        debugMatrix(matrix);
         // 使用高斯消元法先将对角线左下角所有元素全变成0
         for (let column=0;column<simCount;column++) {
             // 获取此列包括对角线元素中绝对值最大的行
@@ -344,6 +348,8 @@ function balance(inputEqu) {
                 }
             }
         }
+        console.log("Generalize matrix step #1: ");
+        debugMatrix(matrix);
         // 再将右上角化为0
         for (let column=simCount-1;column>=0;column--) {
             for (let row=column-1;row>=0;row--) {
@@ -353,6 +359,8 @@ function balance(inputEqu) {
                 }
             }
         }
+        console.log("Generalize matrix step #2: ");
+        debugMatrix(matrix);
         // 取出矩阵中的结果
         let x = matrix[0].length-1;
         let coefs = [];
