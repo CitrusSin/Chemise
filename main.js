@@ -229,7 +229,7 @@ function getDiff(list1, list2) {
 
 function balance(inputEqu) {
     try {
-        let arr1 = inputEqu.split("=");
+        let arr1 = inputEqu.split(/=+/);
         if (arr1.length != 2) {
             throw "化学方程式格式错误！";
         }

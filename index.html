@@ -25,14 +25,12 @@
     <img src="chemise.png" style="width:15%;min-width:200px;margin:20px;border-radius:100%;box-shadow:3px 3px 4px rgba(0, 0, 0, 0.4)" />
     <div class="main">
         <div>
-            <input id="chemInput" class="centerInput" />
+            <input id="chemInput" class="centerInput" style="word-break:break-all"/>
             <button id="start" onclick="processStart()">开始配平</button>
         </div>
         <div style="margin: 5px 5px 5px 5px">
             <h2>预览</h2>
-            <div id="inputDisplay" style="font-size:20px" style="margin: 5px 5px 5px 5px">
-                $Empty$
-            </div>
+            <div id="inputDisplay" style="font-size:20px;word-break:break-all" style="margin: 5px 5px 5px 5px"></div>
         </div>
     </div>
     <div id="showdiv" class="main" hidden="" style="margin-top:5px">
@@ -103,45 +101,5 @@
         <p>56 钡 Ba 137.327（7）</p>
     </div>
 </body>
-<script>
-function processStart() {
-    document.getElementById("showdiv").hidden = false;
-    var output = document.getElementById("output");
-    var warning = document.getElementById("warning");
-    try {
-        var balanced = balance(document.getElementById("chemInput").value);
-        output.style.color = "black";
-        output.innerText = "结果: \n$" + convertToTex(balanced) + "$";
-        window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, output])
-        warning.hidden = true;
-    } catch (err) {
-        warning.hidden = false;
-        output.style.color = "red";
-        output.innerText = err;
-    }
-}
-
-var b = document.getElementById("body");
-var chemInput = document.getElementById("chemInput");
-var inputDisplay = document.getElementById("inputDisplay");
-var updateInput = false;
-var inputInnerText = ""
-
-b.setAttribute("style", "background-size: " + window.screen.availWidth + "px " + window.screen.availHeight + "px;");
-chemInput.oninput = function(e) {
-    inputInnerText = "$" + convertToTex(chemInput.value) + "$"
-    updateInput = true;
-}
-
-setInterval(function() {
-    if (updateInput) {
-        if (inputInnerText == "$$") {
-            inputInnerText = "$Empty$"
-        }
-        inputDisplay.innerText = inputInnerText;
-        window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, inputDisplay]);
-        updateInput = false;
-    }
-}, 1000)
-</script>
+<script src="index_script.js"></script>
 </html>
