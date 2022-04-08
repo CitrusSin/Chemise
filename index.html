@@ -8,13 +8,32 @@
     <meta name="theme-color" content="aquamarine">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <link rel="stylesheet" type="text/css" media="all and (orientation:portrait)" href="main-p.css" />
+    <link rel="dns-prefetch" href="//cdn.mathjax.org" />
     <script src="main.js"></script>
+    <script src="formula_display.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </head>
 <body id="body">
     <img src="chemise.png" style="width:15%;min-width:200px;margin:20px;border-radius:100%;box-shadow:3px 3px 4px rgba(0, 0, 0, 0.4)" />
     <div class="main">
-        <input id="chemInput" class="centerInput" />
-        <button id="start" onclick="processStart()">开始配平</button>
+        <div>
+            <input id="chemInput" class="centerInput" />
+            <button id="start" onclick="processStart()">开始配平</button>
+        </div>
+        <div style="margin: 5px 5px 5px 5px">
+            <h2>预览</h2>
+            <div id="inputDisplay" style="font-size:20px" style="margin: 5px 5px 5px 5px">
+                $Empty$
+            </div>
+        </div>
     </div>
     <div id="showdiv" class="main" hidden="" style="margin-top:5px">
         <img id="warning" width="32" height="32" hidden="" src="warning.png" style="margin:5px" />
@@ -92,7 +111,8 @@ function processStart() {
     try {
         var balanced = balance(document.getElementById("chemInput").value);
         output.style.color = "black";
-        output.innerText = "结果: \n" + balanced;
+        output.innerText = "结果: \n$" + convertToTex(balanced) + "$";
+        window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, output])
         warning.hidden = true;
     } catch (err) {
         warning.hidden = false;
@@ -100,7 +120,28 @@ function processStart() {
         output.innerText = err;
     }
 }
+
 var b = document.getElementById("body");
-b.setAttribute("style", "background-size: " + window.screen.availWidth + "px " + window.screen.availHeight + "px;")
+var chemInput = document.getElementById("chemInput");
+var inputDisplay = document.getElementById("inputDisplay");
+var updateInput = false;
+var inputInnerText = ""
+
+b.setAttribute("style", "background-size: " + window.screen.availWidth + "px " + window.screen.availHeight + "px;");
+chemInput.oninput = function(e) {
+    inputInnerText = "$" + convertToTex(chemInput.value) + "$"
+    updateInput = true;
+}
+
+setInterval(function() {
+    if (updateInput) {
+        if (inputInnerText == "$$") {
+            inputInnerText = "$Empty$"
+        }
+        inputDisplay.innerText = inputInnerText;
+        window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, inputDisplay]);
+        updateInput = false;
+    }
+}, 1000)
 </script>
 </html>
