@@ -16,17 +16,19 @@ function convertToTex(chemicalFormulaStr) {
         let chems = chemicalFormulaStr.split("+");
         let result = [];
         chems.forEach(element => {
-            result.push(element.replace(/([A-Z][a-z]*)(\d+)?(\^\d*[-*])?/g, function(_, elementName, drCount, urCharge) {
-                let str = "$" + elementName;
+            let replaced = element.replace(/([A-Z][a-z]*)(\d+)?(\^\d*[-*])?/g, function(_, elementName, drCount, urCharge) {
+                let str = elementName;
                 if (drCount != undefined) {
                     str += "_{" + drCount + "}";
                 }
                 if (urCharge != undefined) {
                     str += urCharge.replace(/\^(\d*)([-*])/, "^{$1$2}").replace("*", "+");
                 }
-                str += "$";
                 return str;
-            }).replace(/^\d+/, "$$\\color{red}{$&}$$"));
+            }).replace(/^\d+/, "\\color{red}{$&}");
+            if (replaced.length > 0) {
+                result.push("$" + replaced + "$");
+            }
         });
         return result.join(" $+$ ");
     }
