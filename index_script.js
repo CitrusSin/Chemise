@@ -26,6 +26,7 @@ function convertToTex(chemicalFormulaStr) {
                 }
                 return str;
             }).replace(/^\d+/, "\\color{red}{$&}");
+            replaced = replaced.replace(/\)(\d+)/g, ")_{$1}");
             if (replaced.length > 0) {
                 result.push("$" + replaced + "$");
             }
