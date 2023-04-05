@@ -81,7 +81,7 @@ class Chemical {
     }
 }
 
-function getMaxDiv(a, b) {
+function gcd(a, b) {
     while (a % b != 0) {
         let c = a % b;
         a = b;
@@ -90,21 +90,21 @@ function getMaxDiv(a, b) {
     return b;
 }
 
-function getMinMulti(a, b) {
-    return a * b / getMaxDiv(a, b);
+function lcm(a, b) {
+    return a * b / gcd(a, b);
 }
 
-function getListMinMulti(list) {
+function listLcm(list) {
     let comm = list[0];
     for (let n=1;n<list.length;n++) {
-        comm = getMinMulti(comm, list[n]);
+        comm = lcm(comm, list[n]);
     }
     return comm;
 }
 
 class Rational {
     constructor(numer, deno){
-        let maxDiv = getMaxDiv(numer, deno);
+        let maxDiv = gcd(numer, deno);
         this.numer = numer / maxDiv;
         this.deno = deno / maxDiv;
     }
@@ -117,7 +117,7 @@ class Rational {
         let deno1 = this.deno;
         let num2 = rational.numer;
         let deno2 = rational.deno;
-        let minMulti = getMinMulti(deno1, deno2);
+        let minMulti = lcm(deno1, deno2);
         num1 *= (minMulti / deno1);
         num2 *= (minMulti / deno2);
         return new Rational(num1+num2, minMulti);
@@ -131,7 +131,7 @@ class Rational {
         let deno1 = this.deno;
         let num2 = rational.numer;
         let deno2 = rational.deno;
-        let minMulti = getMinMulti(deno1, deno2);
+        let minMulti = lcm(deno1, deno2);
         num1 *= (minMulti / deno1);
         num2 *= (minMulti / deno2);
         return new Rational(num1-num2, minMulti);
@@ -162,7 +162,7 @@ class Rational {
         if (typeof(rational) == "number") {
             rational = new Rational(rational, 1);
         }
-        let cm = getMinMulti(rational.deno, this.deno);
+        let cm = lcm(rational.deno, this.deno);
         let ref1 = rational.numer * cm / rational.deno;
         let ref2 = this.numer * cm / this.deno;
         if (ref2 > ref1) {
@@ -197,22 +197,22 @@ function debugMatrix(matrix) {
     }
 }
 
-function getUnion(list1, list2) {
-    let union = [];
+function union(list1, list2) {
+    let u = [];
     list1.forEach(element => {
-        if (union.find(e => e == element) == undefined) {
-            union.push(element);
+        if (u.find(e => e == element) == undefined) {
+            u.push(element);
         }
     });
     list2.forEach(element => {
-        if (union.find(e => e == element) == undefined) {
-            union.push(element);
+        if (u.find(e => e == element) == undefined) {
+            u.push(element);
         }
     });
-    return union;
+    return u;
 }
 
-function getDiff(list1, list2) {
+function difference(list1, list2) {
     let diff = [];
     list1.forEach(element => {
         if (list2.find(e => e == element) == undefined) {
@@ -225,6 +225,52 @@ function getDiff(list1, list2) {
         }
     }); 
     return diff;
+}
+
+function gaussGeneralize(matrix) {
+    let simCount = Math.min(matrix.length, matrix[0].length-1);
+    // 使用高斯消元法先将对角线左下角所有元素全变成0
+    for (let column=0;column<simCount;column++) {
+        // 获取此列包括对角线元素中绝对值最大的行
+        let maxRowIndex = 0;
+        let maxNum = new Rational(0, 1);
+        for (let row=column;row<matrix.length;row++) {
+            if (matrix[row][column].abs().compareTo(maxNum) > 0) {
+                maxRowIndex = row;
+                maxNum = matrix[row][column].abs();
+            }
+        }
+        // 将最大的行交换到顶行
+        let swapBuf = matrix[maxRowIndex];
+        matrix[maxRowIndex] = matrix[column];
+        matrix[column] = swapBuf;
+        // 将顶行对角线元素化为1
+        let prev = matrix[column][column];
+        for (let i=0;i<matrix[column].length;i++) {
+            matrix[column][i] = matrix[column][i].divideBy(prev);
+        }
+        // 将所有下行对应元素化为0
+        for (let row=column+1;row<matrix.length;row++) {
+            let k = matrix[row][column];
+            for (let i=0;i<matrix[row].length;i++) {
+                matrix[row][i] = matrix[row][i].subtractBy(matrix[column][i].multiply(k));
+            }
+        }
+    }
+    console.log("Generalize matrix step #1: ");
+    debugMatrix(matrix);
+    // 再将右上角化为0
+    for (let column=simCount-1;column>=0;column--) {
+        for (let row=column-1;row>=0;row--) {
+            let prev = matrix[row][column]
+            for (let i=0;i<matrix[row].length;i++) {
+                matrix[row][i] = matrix[row][i].subtractBy(matrix[column][i].multiply(prev));
+            }
+        }
+    }
+    console.log("Generalize matrix step #2: ");
+    debugMatrix(matrix);
+    return matrix;
 }
 
 function balance(inputEqu) {
@@ -241,11 +287,10 @@ function balance(inputEqu) {
         rightchemstr.forEach(element => rightChems.push(new Chemical(element)));
         let leftElements = [];
         let rightElements = [];
-        leftChems.forEach(chem => leftElements = getUnion(leftElements, chem.elements));
-        rightChems.forEach(chem => rightElements = getUnion(rightElements, chem.elements));
-        let diffs = getDiff(leftElements, rightElements);
-        if (diffs.length > 0) {
-            throw "元素" + diffs.join(", ") + "不守恒！";
+        leftChems.forEach(chem => leftElements = union(leftElements, chem.elements));
+        rightChems.forEach(chem => rightElements = union(rightElements, chem.elements));
+        if (difference(leftElements, rightElements).length > 0) {
+            throw "元素" + difference(leftElements, rightElements).join(", ") + "不守恒！";
         }
         // 构建矩阵以解线性方程组（有多解）
         let matrix = [];
@@ -280,87 +325,11 @@ function balance(inputEqu) {
             elecRow[a+leftChems.length] = new Rational(-chem.elec, 1);
         }
         matrix.push(elecRow);
-        let simCount = Math.min(matrix.length, matrix[0].length-1);
         console.log("Original matrix built.");
         debugMatrix(matrix);
-        // 移除没有意义的行（例如全为0的行或与其它行向量平行）
-        // 先移除全为0的行
-        matrix.forEach((row, index) => {
-            if (row.find(n => n.compareTo(0) != 0) == undefined) {
-                matrix.splice(index, 1);
-            }
-        });
-        // 再移除与其它行向量平行的行
-        // 遍历所有不重复的2行组
-        for (let y1=0;y1<matrix.length;y1++) {
-            for (let y2=0;y2<matrix.length;y2++) {
-                if (y1 != y2) {
-                    let isFullyEqual = true;
-                    let k = undefined;
-                    for (let referX=0;referX<matrix[0].length;referX++) {
-                        if (matrix[y1][referX].compareTo(0) != 0 && matrix[y2][referX].compareTo(0) != 0) {
-                            k = matrix[y1][referX].divideBy(matrix[y2][referX]);
-                            break;
-                        }
-                    }
-                    if (k != undefined) {
-                        for (let x=0;x<matrix[0].length;x++) {
-                            if ((matrix[y2][x].compareTo(0) != 0 && matrix[y1][x].divideBy(matrix[y2][x]).compareTo(k) != 0)
-                                || (matrix[y2][x].compareTo(0) == 0 && matrix[y1][x].compareTo(0) != 0)) {
-                                isFullyEqual = false;
-                                break;
-                            }
-                        }
-                        if (isFullyEqual) {
-                            matrix.splice(y2, 1);
-                        }
-                    }
-                }
-            }
-        }
-        console.log("Simplified matrix: ");
-        debugMatrix(matrix);
-        // 使用高斯消元法先将对角线左下角所有元素全变成0
-        for (let column=0;column<simCount;column++) {
-            // 获取此列包括对角线元素中绝对值最大的行
-            let maxRowIndex = 0;
-            let maxNum = new Rational(0, 1);
-            for (let row=column;row<matrix.length;row++) {
-                if (matrix[row][column].abs().compareTo(maxNum) > 0) {
-                    maxRowIndex = row;
-                    maxNum = matrix[row][column].abs();
-                }
-            }
-            // 将最大的行交换到顶行
-            let swapBuf = matrix[maxRowIndex];
-            matrix[maxRowIndex] = matrix[column];
-            matrix[column] = swapBuf;
-            // 将顶行对角线元素化为1
-            let prev = matrix[column][column];
-            for (let i=0;i<matrix[column].length;i++) {
-                matrix[column][i] = matrix[column][i].divideBy(prev);
-            }
-            // 将所有下行对应元素化为0
-            for (let row=column+1;row<matrix.length;row++) {
-                let k = matrix[row][column];
-                for (let i=0;i<matrix[row].length;i++) {
-                    matrix[row][i] = matrix[row][i].subtractBy(matrix[column][i].multiply(k));
-                }
-            }
-        }
-        console.log("Generalize matrix step #1: ");
-        debugMatrix(matrix);
-        // 再将右上角化为0
-        for (let column=simCount-1;column>=0;column--) {
-            for (let row=column-1;row>=0;row--) {
-                let prev = matrix[row][column]
-                for (let i=0;i<matrix[row].length;i++) {
-                    matrix[row][i] = matrix[row][i].subtractBy(matrix[column][i].multiply(prev));
-                }
-            }
-        }
-        console.log("Generalize matrix step #2: ");
-        debugMatrix(matrix);
+
+        matrix = gaussGeneralize(matrix);
+
         // 取出矩阵中的结果
         let x = matrix[0].length-1;
         let coefs = [];
@@ -370,7 +339,7 @@ function balance(inputEqu) {
         coefs.push(new Rational(1, 1));
         let denos = [];
         coefs.forEach(coef => denos.push(coef.deno));
-        let minMulti = getListMinMulti(denos);
+        let minMulti = listLcm(denos);
         for (let i=0;i<coefs.length;i++) {
             coefs[i] = coefs[i].multiply(minMulti);
         }
