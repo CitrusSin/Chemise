@@ -200,12 +200,12 @@ function debugMatrix(matrix) {
 function union(list1, list2) {
     let u = [];
     list1.forEach(element => {
-        if (u.find(e => e == element) == undefined) {
+        if (u.find(e => e == element) === undefined) {
             u.push(element);
         }
     });
     list2.forEach(element => {
-        if (u.find(e => e == element) == undefined) {
+        if (u.find(e => e == element) === undefined) {
             u.push(element);
         }
     });
@@ -215,12 +215,12 @@ function union(list1, list2) {
 function difference(list1, list2) {
     let diff = [];
     list1.forEach(element => {
-        if (list2.find(e => e == element) == undefined) {
+        if (list2.find(e => e == element) === undefined) {
             diff.push(element);
         }
     });
     list2.forEach(element => {
-        if (list1.find(e => e == element) == undefined) {
+        if (list1.find(e => e == element) === undefined) {
             diff.push(element);
         }
     }); 
